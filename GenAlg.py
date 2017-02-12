@@ -6,13 +6,14 @@ import math
 import Params
 import random
 
-NUM_BEST_CHOSEN = 0
-NUM_BEST_COPIES = 0
+NUM_BEST_CHOSEN = 4
+NUM_BEST_COPIES = 1
 
 old_pop = []
 new_pop = []
 total_fitness = 0
 average_fitness = 0
+
 
 def get_total_fitness():
     global total_fitness
@@ -82,13 +83,14 @@ def get_parent():
 def crossover(mum, dad):
     # Copy parents if crossover rate doesn't pass,
     # or if same parent was selected as both mum and dad.
-    if random.uniform(0, 1) < Params.crossover_rate or mum == dad:
+    if random.uniform(0, 1) > Params.crossover_rate or mum == dad:
         child_one = Entity()
         child_two = Entity()
         child_one.brain.replace_weights(mum.brain.get_weights())
         child_two.brain.replace_weights(dad.brain.get_weights())
 
         return child_one, child_two
+    print("Crossover happened")
 
     # If crossover happens, randomly select each weight from either mum or dad
     #parent_weights = (mum.brain.get_weights(), dad.brain.get_weights())
@@ -125,11 +127,6 @@ def crossover(mum, dad):
     child_two.brain.replace_weights(child_two_weights)
 
     return child_one, child_two
-
-
-
-
-
     # Assign each child a parent to copy weights from.
     # Copy weights from 0 -> crossover_point
     #for i in range(crossover_point):
@@ -151,9 +148,14 @@ def crossover(mum, dad):
 def mutate(entity):
     weights = entity.brain.get_weights()
 
-    for weight in weights:
+    for i in range(len(weights)):
         if random.uniform(0, 1) > Params.mutation_rate:
-            weight += Params.mutation_power * random.uniform(-1, 1)
+            weights[i] += Params.mutation_power * random.uniform(-1, 1)
+
+            if weights[i] < -1:
+                weights[i] = -1
+            elif weights[i] > 1:
+                weights[i] = 1
 
     entity.brain.replace_weights(weights)
 
@@ -173,17 +175,20 @@ def evolve(population):
     # Sort old population by fitness
     old_pop = sort_entities(old_pop)
 
-    # Remove lowest fitness from old population
-    old_pop.pop(len(old_pop) - 1)
+    # Remove any entity that lost ALL its rounds from the population.
+    fitness_cutoff = Params.MATCHES_PER_FIGHTER * Params.FITNESS_FOR_LOSS
+    for entity in old_pop:
+        if entity.fitness <= fitness_cutoff:
+            old_pop.remove(entity)
 
     get_total_fitness()
-    #get_avg_fitness()
 
     # Add elite entities to new population
     copy_best()
 
     # Continue generating new entities until new population is filled
-    while len(new_pop) < Params.population_size:
+    # x2 population size to account for both populations
+    while len(new_pop) < Params.population_size * 2:
         # Select parents
         mum = get_parent()
         dad = get_parent()

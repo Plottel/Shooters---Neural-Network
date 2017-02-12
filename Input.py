@@ -36,16 +36,8 @@ tracked_keys = {}
 
 # Initialises variables and specifies which keys will be tracked for input
 def init():
-    add_key(pygame.K_w)
-    add_key(pygame.K_s)
-    add_key(pygame.K_a)
-    add_key(pygame.K_d)
-    add_key(pygame.K_c)
     add_key(pygame.K_r)
-    add_key(pygame.K_q)
-    add_key(pygame.K_e)
-    add_key(pygame.K_g)
-    add_key(pygame.K_t)
+    add_key(pygame.K_s)
 
 
 # Adds a new key to be tracked for input
