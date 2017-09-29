@@ -4,6 +4,7 @@ A program which teaches AIs to fight against each other using a simple
 feed-forward Neural Network. The network is trained by a Genetic Algorithm.
 
 * Demo video - https://www.youtube.com/watch?v=afJB4jtnCaQ&t=7s
+* Inspired by tutorials on http://www.ai-junkie.com/
 
 ### Simulation Specs
 The program consists of two entities fighting against each other. They can move
